@@ -1,8 +1,6 @@
 #ifndef s21_string
 #define s21_string
 
-#include <string.h>
-#include <stdio.h>
 #include <limits.h>
 #include <math.h>
 #include <stdarg.h>
