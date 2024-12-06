@@ -1,5 +1,4 @@
 #include "s21_string.h"
-#include <check.h>
 
 int main(void) {
     int number_failed;
