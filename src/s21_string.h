@@ -2,7 +2,7 @@
 #define s21_string
 
 #include <string.h>
-#include <check.h>
+#include <stdio.h>
 
 char *s21_strerror(int errnum);
 size_t s21_strlen(const char *str);
