@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#define NULL ((void *)0)
-typedef unsigned long size_t;
+#define s21_NULL ((void *)0)
+typedef unsigned long s21_size_t;
 
 void *s21_memchr(const void *str, int c, size_t n);
 int s21_memcmp(const void *str1, const void *str2, size_t n);
