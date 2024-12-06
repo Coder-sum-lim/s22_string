@@ -1,5 +1,4 @@
 #include "s21_string.h"
-#include <check.h>
 
 START_TEST(test_s21_strerror1) {
     ck_assert_str_eq(s21_strerror(1), strerror(1));
@@ -15,13 +14,21 @@ START_TEST(test_s21_strerror2) {
 }
 END_TEST
 
-Suite *s21_error_suite(void) {
+START_TEST(test_s21_strlen) {
+    ck_assert_int_eq(s21_strlen("12345"), strlen("12345"));
+    ck_assert_int_eq(s21_strlen("\n"), strlen("\n"));
+    ck_assert_int_eq(s21_strlen(""), strlen(""));
+}
+END_TEST
+
+Suite *s21_string_suite(void) {
     Suite *suite;
     TCase *tc_core;
 
-    suite = suite_create("S21 Error Tests");
+    suite = suite_create("S21_string Tests");
     tc_core = tcase_create("Core");
 
+    tcase_add_test(tc_core, test_s21_strlen);
     tcase_add_test(tc_core, test_s21_strerror1);
     tcase_add_test(tc_core, test_s21_strerror2);
     suite_add_tcase(suite, tc_core);
@@ -34,7 +41,7 @@ int main(void) {
     Suite *suite;
     SRunner *runner;
 
-    suite = s21_error_suite();
+    suite = s21_string_suite();
     runner = srunner_create(suite);
 
     srunner_run_all(runner, CK_NORMAL);
