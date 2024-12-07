@@ -7,7 +7,19 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <wchar.h>
+#include <ctype.h>
+#include <string.h>
 
+#define is_flag(c) \
+  ((c) == '-' || (c) == '+' || (c) == ' ' || (c) == '#' || (c) == '0')
+#define is_digit(c) ((c) >= '0' && (c) <= '9')
+#define is_length(c) ((c) == 'h' || (c) == 'l' || (c) == 'L')
+#define is_specifier(c)                                                  \
+  ((c) == 'c' || (c) == 'd' || (c) == 'i' || (c) == 'e' || (c) == 'E' || \
+   (c) == 'f' || (c) == 'g' || (c) == 'G' || (c) == 'o' || (c) == 's' || \
+   (c) == 'u' || (c) == 'x' || (c) == 'X' || (c) == 'p' || (c) == 'n' || \
+   (c) == '%')
+#define is_space(c) ((c) == ' ' || (c) == '\t' || (c) == '\n')
 
 #define S21_NULL ((void *)0)
 typedef unsigned long s21_size_t;

@@ -252,9 +252,9 @@ static const char *const errors[] = {
 char *s21_strerror(int errnum) {
     static char err[150];
     if (errnum >= 0 && errnum <= 133) {
-        s21_sprintf(err, sizeof(err), errors[errnum], "");
+        s21_sprintf(err, errors[errnum], "");
     } else {
-        s21_sprintf(err, sizeof(err), "Unknown error: %d", errnum);
+        s21_sprintf(err, "Unknown error: %d", errnum);
     }
     return err;
 }
