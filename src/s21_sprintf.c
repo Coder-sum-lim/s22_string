@@ -18,6 +18,13 @@ typedef struct Flags {
     bool is_g;
 } Flags;
 
+void s21_int_to_string(char *result, long long int num, int num_sys, Flags *flags);
+void s21_uint_to_str(char *result, unsigned long long int num, int num_sys, Flags *flags);
+static void s21_sprintf_flags(char c, Flags *flags);
+void s21_str_to_str(char *result, char *str, Flags *flags);
+static void s21_flags_int(char *result, char *str, char *prefix, Flags *flags);
+void process_specifier(char **str, char specifier, va_list factor, Flags flags, char *start_str);
+
 // Функция для получения целочисленного аргумента в зависимости от размера
 long long int get_arg_int(va_list factor, Flags flags) {
     return (flags.size == 'l') ? va_arg(factor, long long int) : va_arg(factor, int);
@@ -64,7 +71,7 @@ void s21_int_to_string(char *result, long long int num, int num_sys, Flags *flag
 
         if (num_sys == 8 || num_sys == 16) {
             if (flags->sharp && num_sys == 8) {
-                s21_strncat(prefix, "0", 1);
+                strncat(prefix, "0", 1);
                 if (flags->accuracy > 0) {
                     flags->accuracy--;
                 }
@@ -72,14 +79,14 @@ void s21_int_to_string(char *result, long long int num, int num_sys, Flags *flag
                 if (flags->accuracy > 1) {
                     flags->accuracy -= 2;
                 }
-                s21_strncat(prefix, "0x", 2);
+                strncat(prefix, "0x", 2);
             }
         } else if (flags->is_negative) {
-            s21_strncat(prefix, "-", 1);
+            strncat(prefix, "-", 1);
         } else if (flags->sign) {
-            s21_strncat(prefix, "+", 1);
+            strncat(prefix, "+", 1);
         } else if (flags->space) {
-            s21_strncat(prefix, " ", 1);
+            strncat(prefix, " ", 1);
         }
 
         s21_flags_int(result, str, prefix, flags);
@@ -88,7 +95,7 @@ void s21_int_to_string(char *result, long long int num, int num_sys, Flags *flag
 
 // Функция для обнуления флагов
 static void s21_zero_flags(Flags *flags) {
-    s21_memset(flags, 0, sizeof(Flags));
+    memset(flags, 0, sizeof(Flags));
     flags->accuracy = -1;
 }
 
@@ -121,15 +128,15 @@ static void s21_sprintf_flags(char c, Flags *flags) {
 
 // Функция для обработки ошибок форматирования
 static void s21_errors_sprintf(char *str, Flags flags) {
-    s21_strncat(str, "%", 1);
+    strncat(str, "%", 1);
     if (flags.sharp) {
-        s21_strncat(str, "#", 1);
+        strncat(str, "#", 1);
     }
     if (flags.sign) {
-        s21_strncat(str, "+", 1);
+        strncat(str, "+", 1);
     }
     if (flags.alignment) {
-        s21_strncat(str, "-", 1);
+        strncat(str, "-", 1);
     }
     if (flags.width) {
         Flags fl = {0};
@@ -137,7 +144,7 @@ static void s21_errors_sprintf(char *str, Flags flags) {
     }
     if (flags.accuracy) {
         Flags fl = {0};
-        s21_strncat(str, ".", 1);
+        strncat(str, ".", 1);
         s21_uint_to_str(str, flags.accuracy, 10, &fl);
     }
 }
@@ -145,7 +152,7 @@ static void s21_errors_sprintf(char *str, Flags flags) {
 // Функция для чтения целого числа из строки
 static int s21_sprintf_read_int(const char *str, int *i) {
     unsigned long long int ret_int = 0;
-    while (is_digit(str[*i])) {
+    while (isdigit(str[*i])) {
         ret_int *= 10;
         ret_int += str[*i] - '0';
         (*i)++;
@@ -165,7 +172,7 @@ void s21_char_to_str(char **result, char c) {
         char str[2] = "";
         str[0] = c;
         str[1] = '\0';
-        s21_strncat(*result, str, 1);
+        strncat(*result, str, 1);
         if (c == '\0') {
             *result += s21_strlen(*result) + 1;
         }
@@ -191,17 +198,17 @@ static void s21_flags_int(char *result, char *str, char *prefix, Flags *flags) {
 
         if (!flags->alignment) {
             for (int i = 0; i < count_space; i++) {
-                s21_strncat(result, " ", 1);
+                strncat(result, " ", 1);
             }
         }
-        s21_strncat(result, prefix, s21_strlen(prefix));
+        strncat(result, prefix, s21_strlen(prefix));
         for (int i = 0; i < count_zero; i++) {
-            s21_strncat(result, "0", 1);
+            strncat(result, "0", 1);
         }
-        s21_strncat(result, str, s21_strlen(str));
+        strncat(result, str, s21_strlen(str));
         if (flags->alignment) {
             for (int i = 0; i < count_space; i++) {
-                s21_strncat(result, " ", 1);
+                strncat(result, " ", 1);
             }
         }
     }
@@ -226,17 +233,17 @@ static void s21_flags_float(char *result, char *str, char *prefix,
 
         if (!flags->alignment) {
             for (int i = 0; i < count_space; i++) {
-                s21_strncat(result, " ", 1);
+                strncat(result, " ", 1);
             }
         }
-        s21_strncat(result, prefix, s21_strlen(prefix));
+        strncat(result, prefix, s21_strlen(prefix));
         for (int i = 0; i < count_zero; i++) {
-            s21_strncat(result, "0", 1);
+            strncat(result, "0", 1);
         }
-        s21_strncat(result, str, s21_strlen(str));
+        strncat(result, str, s21_strlen(str));
         if (flags->alignment) {
             for (int i = 0; i < count_space; i++) {
-                s21_strncat(result, " ", 1);
+                strncat(result, " ", 1);
             }
         }
     }
@@ -250,12 +257,12 @@ void s21_float_to_str(char *result, long double num, Flags flags) {
         char prefix[2] = "";
         char float_str[10000] = "0";
         if (flags.sign && num >= 0) {
-            s21_strncat(prefix, "+", 1);
+            strncat(prefix, "+", 1);
         } else if (num < 0) {
             num *= -1;
-            s21_strncat(prefix, "-", 1);
+            strncat(prefix, "-", 1);
         } else if (flags.space) {
-            s21_strncat(prefix, " ", 1);
+            strncat(prefix, " ", 1);
         }
         int count_div = 0;
         while (num >= 1.0) {
@@ -263,11 +270,11 @@ void s21_float_to_str(char *result, long double num, Flags flags) {
             count_div++;
         }
         if (count_div == 0) {
-            s21_strncat(float_str, "0", 1);
+            strncat(float_str, "0", 1);
         }
         while (count_div > 0) {
             num = (num - (int)num) * 10;
-            s21_int_to_str(float_str, (int)num, 10, &int_flags);
+            s21_int_to_string(float_str, (int)num, 10, &int_flags);
             count_div--;
         }
         if (flags.is_g) {
@@ -276,11 +283,11 @@ void s21_float_to_str(char *result, long double num, Flags flags) {
             }
         }
         if (flags.sharp || flags.accuracy != 0) {
-            s21_strncat(float_str, ".", 1);
+            strncat(float_str, ".", 1);
         }
         while (flags.accuracy > 0) {
             num = (num - (int)num) * 10;
-            s21_int_to_str(float_str, (int)num, 10, &int_flags);
+            s21_int_to_string(float_str, (int)num, 10, &int_flags);
             flags.accuracy--;
         }
 
@@ -301,7 +308,7 @@ void s21_float_to_str(char *result, long double num, Flags flags) {
                 pos--;
             }
         }
-        if (flags.is_g && s21_strchr(float_str, '.') != S21_NULL && !flags.sharp) {
+        if (flags.is_g && strchr(float_str, '.') != S21_NULL && !flags.sharp) {
             s21_size_t i = s21_strlen(float_str) - 1;
             while (float_str[i] == '0') {
                 float_str[i] = '\0';
@@ -335,12 +342,12 @@ void s21_notat_float_to_str(char *result, long double num, Flags flags) {
         char prefix[2] = "";
         char float_str[10000] = "";
         if (flags.sign && num >= 0) {
-            s21_strncat(prefix, "+", 1);
+            strncat(prefix, "+", 1);
         } else if (num < 0) {
             num *= -1;
-            s21_strncat(prefix, "-", 1);
+            strncat(prefix, "-", 1);
         } else if (flags.space) {
-            s21_strncat(prefix, " ", 1);
+            strncat(prefix, " ", 1);
         }
         int exp = 0;
         if (num >= 1.0) {
@@ -369,7 +376,7 @@ void s21_notat_float_to_str(char *result, long double num, Flags flags) {
             exp++;
             float_str[s21_strlen(float_str) - 1] = '\0';
         }
-        if (flags.is_g && s21_strchr(float_str, '.') != S21_NULL && !flags.sharp) {
+        if (flags.is_g && strchr(float_str, '.') != S21_NULL && !flags.sharp) {
             s21_size_t i = s21_strlen(float_str) - 1;
             while (float_str[i] == '0') {
                 float_str[i] = '\0';
@@ -379,18 +386,18 @@ void s21_notat_float_to_str(char *result, long double num, Flags flags) {
                 float_str[i] = '\0';
             }
         }
-        s21_strncat(float_str, "e", 1);
+        strncat(float_str, "e", 1);
         if (exp < 0) {
-            s21_strncat(float_str, "-", 1);
+            strncat(float_str, "-", 1);
             exp *= -1;
         } else {
-            s21_strncat(float_str, "+", 1);
+            strncat(float_str, "+", 1);
         }
         if (exp < 10) {
-            s21_strncat(float_str, "0", 1);
+            strncat(float_str, "0", 1);
         }
         float_flags.accuracy = -1;
-        s21_int_to_str(float_str, exp, 10, &float_flags);
+        s21_int_to_string(float_str, exp, 10, &float_flags);
         s21_flags_float(result, float_str, prefix, &flags);
     } else if (result != S21_NULL) {
         if (isinf((double)num)) {
@@ -410,10 +417,10 @@ static s21_size_t s21_significant_digit_float(char *res) {
     int count = 0;
     if (res != S21_NULL) {
         s21_size_t i = 0;
-        while ((!is_digit(res[i]) || res[i] == '0') && i < s21_strlen(res)) {
+        while ((!isdigit(res[i]) || res[i] == '0') && i < s21_strlen(res)) {
             i++;
         }
-        while ((is_digit(res[i]) || res[i] == '.') && i < s21_strlen(res)) {
+        while ((isdigit(res[i]) || res[i] == '.') && i < s21_strlen(res)) {
             if (res[i] != '.') {
                 count++;
             }
@@ -449,15 +456,15 @@ void s21_str_to_str(char *result, char *str, Flags *flags) {
         }
         if ((int)flags->width > count && !flags->alignment) {
             for (s21_size_t i = 0; i < flags->width - count; i++) {
-                s21_strncat(result, " ", 1);
+                strncat(result, " ", 1);
             }
         }
 
-        s21_strncat(result, str, count);
+        strncat(result, str, count);
 
         if ((int)flags->width > count && flags->alignment) {
             for (s21_size_t i = 0; i < flags->width - count; i++) {
-                s21_strncat(result, " ", 1);
+                strncat(result, " ", 1);
             }
         }
     } else if (str == S21_NULL) {
@@ -483,11 +490,11 @@ static s21_size_t s21_wcslen(wchar_t *str) {
 void s21_ptr_to_str(char *result, void *ptr, Flags *flags) {
     if (result != S21_NULL) {
         if (ptr == S21_NULL) {
-            s21_strncat(result, "(nil)", 5);
+            strncat(result, "(nil)", 5);
         } else {
             flags->sharp = true;
             if (flags->sign) {
-                s21_strncat(result, "+", 1);
+                strncat(result, "+", 1);
                 if (flags->width) {
                     flags->width--;
                 }
@@ -669,7 +676,7 @@ int s21_sprintf(char *str, const char *format, ...) {
             } else if (state == 1 && is_flag(format[i])) {
                 s21_sprintf_flags(format[i], &flags);
             } else if (state == 1 && (is_digit(format[i]) || format[i] == '*')) {
-                flags.width = (is_digit(format[i])) ? s21_sprintf_read_int(format, &i) : va_arg(factor, int);
+                flags.width = (isdigit(format[i])) ? s21_sprintf_read_int(format, &i) : va_arg(factor, int);
                 state = 2;
             } else if (state == 1 && format[i] == '.') {
                 i++;
@@ -683,11 +690,11 @@ int s21_sprintf(char *str, const char *format, ...) {
                 process_specifier(&str, format[i], factor, flags, start_str);
                 state = 0;
             } else if (state == 0) {
-                s21_strncat(str, &(format[i]), 1);
+                strncat(str, &(format[i]), 1);
             } else {  
                 // Error handling
                 s21_errors_sprintf(str, flags);
-                s21_strncat(str, format + i, 1);
+                strncat(str, format + i, 1);
                 state = 0;
             }
             i++;
